@@ -18,6 +18,18 @@ namespace MotionDetector.Views
             this.InitializeComponent();
             this.DataContext = new SettingsViewModel();
             this.Loaded += SettingsPage_Loaded;
+            this.LostFocus += SettingsPage_LostFocus;
+        }
+
+        private void SettingsPage_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // Persist when any field loses focus (covers PasswordBox and default TextBox binding)
+            try
+            {
+                if (this.DataContext is SettingsViewModel vm && vm.ConfigurationSettings != null)
+                    ConfigurationServices.SaveConfig(vm.ConfigurationSettings);
+            }
+            catch { }
         }
 
         private void SettingsPage_Loaded(object sender, RoutedEventArgs e)
@@ -41,8 +53,14 @@ namespace MotionDetector.Views
 
         private async void BrowseToGmailSecurity(object sender, RoutedEventArgs e)
         {
-            Uri gmailSecurityUri = new Uri(@"https://myaccount.google.com/lesssecureapps");            
+            // Modern Gmail requires 2FA + App Passwords (the old "less secure apps" is gone)
+            Uri gmailSecurityUri = new Uri(@"https://myaccount.google.com/apppasswords");            
             await Windows.System.Launcher.LaunchUriAsync(gmailSecurityUri);
+        }
+
+        private void OpenDocumentation_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            Frame?.Navigate(typeof(DocumentationPage));
         }
     }
 }

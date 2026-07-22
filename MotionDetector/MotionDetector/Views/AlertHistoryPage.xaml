@@ -1,0 +1,42 @@
+<Page
+    x:Class="MotionDetector.Views.AlertHistoryPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid Padding="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Text="Alert History  Premium" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,12" />
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,12">
+            <Button Content="Refresh" Click="Refresh_Click" Margin="0,0,8,0" />
+            <Button Content="Export CSV" Click="Export_Click" Background="#FFD54F" Foreground="#1A1A1A" FontWeight="Bold" />
+            <TextBlock x:Name="StatusText" Margin="12,0,0,0" VerticalAlignment="Center" FontSize="12" Foreground="Gray" />
+        </StackPanel>
+
+        <ListView Grid.Row="2" x:Name="HistoryList">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Border Style="{StaticResource CardStyle}" Margin="0,4">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Timestamp}" FontWeight="SemiBold" />
+                            <TextBlock FontSize="12" Opacity="0.85">
+                                <Run Text="Camera: " /><Run Text="{Binding CameraName}" />
+                                <Run Text="-  Zone: " /><Run Text="{Binding ZoneName}" />
+                            </TextBlock>
+                            <TextBlock Text="{Binding Note}" FontSize="12" Opacity="0.7" />
+                        </StackPanel>
+                    </Border>
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </Grid>
+</Page>

@@ -13,6 +13,12 @@ namespace MotionDetector.Utilities
     public static class SoundsServices
     {
         private static MediaElement _mediaElement = new MediaElement();
+        private const string CustomSoundsFolderName = "CustomSounds";
+
+        private static async Task<StorageFolder> GetCustomSoundsFolderAsync()
+        {
+            return await ApplicationData.Current.LocalFolder.CreateFolderAsync(CustomSoundsFolderName, CreationCollisionOption.OpenIfExists);
+        }
 
         public static async Task<bool> ImportCustomSound()
         {
@@ -25,8 +31,8 @@ namespace MotionDetector.Utilities
 
             if (file != null && file.IsAvailable)
             {
-                StorageFolder folder = await Package.Current.InstalledLocation.GetFolderAsync("Assets\\Sounds");
-                await file.CopyAsync(folder);
+                StorageFolder folder = await GetCustomSoundsFolderAsync();
+                await file.CopyAsync(folder, file.Name, NameCollisionOption.ReplaceExisting);
             }
             return true;
         }
@@ -39,11 +45,27 @@ namespace MotionDetector.Utilities
             }
             else
             {
-                StorageFolder folder = await Package.Current.InstalledLocation.GetFolderAsync("Assets\\Sounds");
-                StorageFile file = await folder.GetFileAsync(sound);
-                IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read);
-                _mediaElement.SetSource(stream, "");
-                _mediaElement.Play();
+                StorageFile file = null;
+                try
+                {
+                    StorageFolder folder = await Package.Current.InstalledLocation.GetFolderAsync("Assets\\Sounds");
+                    file = await folder.GetFileAsync(sound);
+                }
+                catch
+                {
+                    try
+                    {
+                        StorageFolder custom = await GetCustomSoundsFolderAsync();
+                        file = await custom.GetFileAsync(sound);
+                    }
+                    catch { }
+                }
+                if (file != null)
+                {
+                    IRandomAccessStream stream = await file.OpenAsync(FileAccessMode.Read);
+                    _mediaElement.SetSource(stream, "");
+                    _mediaElement.Play();
+                }
             }
             return true;
         }
@@ -66,6 +88,20 @@ namespace MotionDetector.Utilities
                 MessageDialog dialog = new MessageDialog("There was an exception while gathering the included sound files. Please make sure the app has the proper permissions");
                 await dialog.ShowAsync();
             }
+
+            try
+            {
+                StorageFolder custom = await GetCustomSoundsFolderAsync();
+                IReadOnlyList<StorageFile> customFiles = await custom.GetFilesAsync();
+                foreach (StorageFile file in customFiles)
+                {
+                    if (!returnValues.Contains(file.Name))
+                    {
+                        returnValues.Add(file.Name);
+                    }
+                }
+            }
+            catch { }
 
             return returnValues;
         }

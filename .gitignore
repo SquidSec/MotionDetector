@@ -1,17 +1,95 @@
 ﻿################################################################################
-# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+# Visual Studio / UWP
 ################################################################################
 
+# User-specific
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.csproj.user
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+build.log
+*.log
+UpgradeLog*.htm
+UpgradeLog*.XML
+
+# VS cache / options
+.vs/
+**/.vs/
+.vscode/
+
+# NuGet
+*.nupkg
+**/[Pp]ackages/*
+!**/[Pp]ackages/build/
+*.nuget.props
+*.nuget.targets
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Test / coverage
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.coverage
+*.coveragexml
+
+# Publish / store packaging
+AppPackages/
+BundleArtifacts/
+_pkginfo.txt
+Package.StoreAssociation.xml
+**/Package.StoreAssociation.xml
+
+# Signing keys and certs (never commit)
+*.pfx
+*.p12
+*.pem
+*.key
+*.cer
+!**/Assets/**/*.cer
+MotionDetector_StoreKey.pfx
+MotionDetector_TemporaryKey.pfx
+
+# Secrets / local config
+*.env
+.env.*
+!.env.example
+secrets.json
+**/appsettings.*.local.json
+**/Properties/ServiceDependencies/
+**/Connected Services/**/*Local*
+
+# Windows / OS
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Project-specific (legacy absolute paths kept for compatibility)
 /MotionDetector/MotionDetector/MotionDetector_StoreKey.pfx
 /MotionDetector/MotionDetector/Package.StoreAssociation.xml
 /MotionDetector/MotionDetector/_pkginfo.txt
 /MotionDetector/MotionDetector/AppPackages
 /MotionDetector/MotionDetector/BundleArtifacts
-/MotionDetector/MotionDetector/bin/x64/Debug
-/MotionDetector/MotionDetector/obj/x64/Debug
+/MotionDetector/MotionDetector/bin
 /MotionDetector/MotionDetector/obj
 /MotionDetector/.vscode
-/MotionDetector/.vs/MotionDetector/v16
-/MotionDetector/MotionDetector/bin
-/MotionDetector/.vs/MotionDetector/DesignTimeBuild
-/MotionDetector/MotionDetector/MotionDetector_TemporaryKey.pfx
+/MotionDetector/.vs/

@@ -11,6 +11,8 @@ namespace MotionDetector.Models
         private string _smtpPassword;
         private string _recipient;
         private string _preferredSmtpServer;
+        private string _fromAddress;
+        private string _fromName;
 
         public string PreferredSmtpServer
         {
@@ -52,6 +54,18 @@ namespace MotionDetector.Models
         {
             get { return _recipient; }
             set { _recipient = value; OnPropertyChanged(nameof(Recipient)); }
+        }
+
+        public string FromAddress
+        {
+            get { return _fromAddress; }
+            set { _fromAddress = value; OnPropertyChanged(nameof(FromAddress)); }
+        }
+
+        public string FromName
+        {
+            get { return _fromName; }
+            set { _fromName = value; OnPropertyChanged(nameof(FromName)); }
         }
     }
 }

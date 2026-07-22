@@ -41,8 +41,12 @@ namespace MotionDetector.Utilities
             {
                 SmtpSettings = new SmtpSettingsModel()
                 {
+                    SmtpServer = "",
                     SmtpPort = 465,
                     UseSSL = true,
+                    PreferredSmtpServer = "Custom",
+                    FromName = "Universal Motion Detector",
+                    FromAddress = "alerts@motiondetector.local",
                 },
                 AppConfig = new AppConfigModel()
                 {
@@ -53,7 +57,19 @@ namespace MotionDetector.Utilities
                     AlertDelay = 2,
                     CaptureDelay = 500,
                     DarkShiftThreshold = 70,
-                    ConfigVersion = configVersion
+                    ConfigVersion = configVersion,
+                    MinBaselineImages = 5,
+                    StartupCountdownSeconds = 30,
+                    EnableLocalLogging = true,
+                    IgnoreTopPercent = 0,
+                    IgnoreBottomPercent = 0,
+                    IgnoreLeftPercent = 0,
+                    IgnoreRightPercent = 0,
+                    WebhookEnabled = false,
+                    WebhookUrl = "",
+                    UseDarkTheme = false,
+                    DayImageDelta = 7,
+                    NightImageDelta = 7
                 },
                 SoundConfig = new SoundConfigModel()
                 {
@@ -71,13 +87,19 @@ namespace MotionDetector.Utilities
 
             // Apparently there's an edge case where if you create a config file and then attempt to read it right away,
             // it won't exist yet. Doing this little wait and see check fixes it. This also only happens on first run.
-            while (!await SaveManager.FileExists("config.json")) { continue; }
+            int retries = 0;
+            while (!await SaveManager.FileExists("config.json") && retries < 20)
+            {
+                await Task.Delay(50);
+                retries++;
+            }
 
             ConfigurationSettings = await SaveManager.GetJsonFile<ConfigModel>("config.json");
 
             if (ConfigurationSettings.AppConfig.ConfigVersion < configVersion)
             {
-                await SaveManager.SaveJsonFile("config.json", config);
+                ConfigurationSettings.AppConfig.ConfigVersion = configVersion;
+                await SaveManager.SaveJsonFile("config.json", ConfigurationSettings);
             }
 
             IsInitialized = true;

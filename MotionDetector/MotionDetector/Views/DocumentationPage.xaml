@@ -1,0 +1,245 @@
+<Page
+    x:Class="MotionDetector.Views.DocumentationPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:MotionDetector.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="16,12">
+            <TextBlock Text="Documentation" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" />
+        </Border>
+
+        <ScrollViewer Grid.Row="1" Padding="16" VerticalScrollBarVisibility="Auto">
+            <StackPanel MaxWidth="680" HorizontalAlignment="Center">
+
+                <!-- ========== PREMIUM FEATURES FIRST (complete list) ========== -->
+                <Border Background="#2A2410" BorderBrush="#FFD54F" BorderThickness="2" CornerRadius="8" Padding="16" Margin="0,0,0,16">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                            <FontIcon Glyph="&#xE735;" Foreground="#FFD54F" FontSize="22" Margin="0,0,10,0" />
+                            <TextBlock Text="Premium Features" FontSize="22" FontWeight="Bold" Foreground="#FFD54F" VerticalAlignment="Center" />
+                        </StackPanel>
+                        <TextBlock Text="On free tier these appear in the sidebar grayed out. Unlock to use them." FontSize="12" Opacity="0.85" Margin="0,0,0,12" TextWrapping="Wrap" />
+
+                        <TextBlock Text="Hidden Mode" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Stealth dashboard while monitoring continues in the background." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Alert Sounds" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Choose continuous or custom alert audio for motion events." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Alert History" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Searchable local history of alerts with CSV export." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Active Hours Schedule" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Arm/disarm by time window so you are not alerted when home." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Named Zones &amp; Smart Filter" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Name zones and require a minimum motion area % to cut false positives." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Alert Clips &amp; Buffer" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Keep a rolling frame buffer and save short image clips on alert." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Discord / IFTTT Alerts" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Push motion events to Discord webhooks or IFTTT applets." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Multi-Camera" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Pick a second camera from a dropdown. When set, both previews appear on the Dashboard." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Night Vision Preset" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Automatic low-light sensitivity profile when the scene is dark." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Quiet Sound Hours" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Suppress alert sounds during chosen quiet hours." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Settings PIN Lock" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Optional PIN field to protect configuration (stored in settings)." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Health Check" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Periodic health settings for long-running monitoring sessions." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Night Recipient Rules" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Optional alternate recipient routing for overnight alerts." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Remove Ads - $0.99" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Hide SquidSec / partner promotional banners only." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,10" />
+
+                        <TextBlock Text="Unlock Premium Features - $1.99" FontWeight="SemiBold" FontSize="15" Margin="0,0,0,2" />
+                        <TextBlock Text="Enables every premium feature above plus ad removal." TextWrapping="Wrap" FontSize="13" Opacity="0.9" Margin="0,0,0,16" />
+
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"
+                                    Visibility="{x:Bind ShowPremiumUpsell, Mode=OneWay}">
+                            <Button Content="Unlock Premium Features - $1.99"
+                                    Click="BuyPremium_Click"
+                                    Background="#FFD54F"
+                                    Foreground="#1A1A1A"
+                                    FontWeight="Bold"
+                                    Padding="20,12"
+                                    Margin="0,0,8,0" />
+                            <Button Content="Remove Ads - $0.99"
+                                    Click="RemoveAds_Click"
+                                    Padding="16,12" />
+                        </StackPanel>
+
+                        <Border Background="#1A3D2E" CornerRadius="6" Padding="12" Margin="0,8,0,0"
+                                Visibility="{x:Bind ShowPremiumOwned, Mode=OneWay}">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <FontIcon Glyph="&#xE73E;" Foreground="#4CAF50" Margin="0,0,8,0" />
+                                <TextBlock Text="Premium unlocked - thank you!" FontWeight="SemiBold" Foreground="#4CAF50" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </Border>
+
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,16">
+                    <StackPanel>
+                        <TextBlock Text="Privacy" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8" />
+                        <TextBlock TextWrapping="Wrap" FontSize="13" Opacity="0.9">
+                            Camera video is processed on your device for motion detection. Images and logs stay in app local storage unless you enable email, webhooks, Discord, or IFTTT. Those features send alert data only to the services you configure. No account is required to use the free features. In-app purchases are handled by the Microsoft Store.
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+                <TextBlock Text="Guides" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8" Opacity="0.8" />
+
+                <!-- Getting Started -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                    <StackPanel>
+                        <ToggleButton x:Name="TgStart" IsChecked="True" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                      Background="Transparent" BorderThickness="0" Click="ToggleSection_Click" Tag="PanelStart">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE8FB;" Margin="0,0,10,0" />
+                                <TextBlock Text="Getting Started" FontSize="16" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <StackPanel x:Name="PanelStart" Margin="12,8,4,4">
+                            <TextBlock Text="1. Open Settings and pick your camera - it saves automatically." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="2. (Optional) Configure email with an App Password." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="3. Set Alert Countdown seconds under Motion Detection." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="4. On Dashboard, wait for baseline images, then press Start Countdown." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="5. Leave the room. After the timer + enough baselines, alerts go live." TextWrapping="Wrap" FontSize="13" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Dashboard -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                    <StackPanel>
+                        <ToggleButton x:Name="TgDash" IsChecked="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                      Background="Transparent" BorderThickness="0" Click="ToggleSection_Click" Tag="PanelDash">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE7F4;" Margin="0,0,10,0" />
+                                <TextBlock Text="Dashboard" FontSize="16" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <StackPanel x:Name="PanelDash" Visibility="Collapsed" Margin="12,8,4,4">
+                            <TextBlock Text="- Top bar: live FPS, last motion, alerts today." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Baseline tab: reference frames for comparison." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Alerts tab: motion captures (context menu to save)." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- STOP ALERTING SOUND stays fixed at the bottom of the left panel." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Start Countdown begins your leave-the-room timer (duration from Settings)." TextWrapping="Wrap" FontSize="13" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Motion -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                    <StackPanel>
+                        <ToggleButton x:Name="TgMotion" IsChecked="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                      Background="Transparent" BorderThickness="0" Click="ToggleSection_Click" Tag="PanelMotion">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE7C3;" Margin="0,0,10,0" />
+                                <TextBlock Text="Motion Detection Settings" FontSize="16" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <StackPanel x:Name="PanelMotion" Visibility="Collapsed" Margin="12,8,4,4">
+                            <TextBlock Text="- Capture Delay - how often frames are checked (ms)." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Alert Delay - cool-down after an alert (seconds)." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Alert Threshold - frames before email/webhook batch." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Alert Countdown - leave-the-room timer length." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Pixel / Image Delta - sensitivity (higher = fewer alerts)." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Day/Night Image Delta - separate day vs dark sensitivity." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Ignore Top/Bottom/Left/Right % - mask edges (windows, clocks)." TextWrapping="Wrap" FontSize="13" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Email -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                    <StackPanel>
+                        <ToggleButton x:Name="TgEmail" IsChecked="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                      Background="Transparent" BorderThickness="0" Click="ToggleSection_Click" Tag="PanelEmail">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE715;" Margin="0,0,10,0" />
+                                <TextBlock Text="Email Alerts" FontSize="16" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <StackPanel x:Name="PanelEmail" Visibility="Collapsed" Margin="12,8,4,4">
+                            <TextBlock Text="Enable Send Emails, pick a provider, and use an App Password (not your normal login password)." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,8" />
+                            <TextBlock Text="Gmail: smtp.gmail.com port 465 SSL. Enable 2FA, then create an App Password." TextWrapping="Wrap" FontSize="13" />
+                            <HyperlinkButton Content="Gmail App Passwords" NavigateUri="https://myaccount.google.com/apppasswords" />
+                            <TextBlock Text="Outlook: smtp.office365.com port 587 SSL. Admins may need to allow SMTP AUTH." TextWrapping="Wrap" FontSize="13" Margin="0,8,0,0" />
+                            <HyperlinkButton Content="Microsoft account security" NavigateUri="https://account.microsoft.com/security" />
+                            <HyperlinkButton Content="SMTP AUTH documentation" NavigateUri="https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/authenticated-client-smtp-submission" />
+                            <TextBlock Text="Yahoo: smtp.mail.yahoo.com port 465 SSL with an App Password." TextWrapping="Wrap" FontSize="13" Margin="0,8,0,0" />
+                            <HyperlinkButton Content="Yahoo Account Security" NavigateUri="https://login.yahoo.com/account/security" />
+                            <TextBlock Text="iCloud: smtp.mail.me.com port 587 SSL with an app-specific password." TextWrapping="Wrap" FontSize="13" Margin="0,8,0,0" />
+                            <HyperlinkButton Content="Apple ID management" NavigateUri="https://appleid.apple.com/account/manage" />
+                            <TextBlock Text="Multiple recipients: comma or semicolon. Settings auto-save. Use Test SMTP Connection to verify." TextWrapping="Wrap" FontSize="13" Margin="0,8,0,0" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Free tier -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,8">
+                    <StackPanel>
+                        <ToggleButton x:Name="TgFree" IsChecked="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                      Background="Transparent" BorderThickness="0" Click="ToggleSection_Click" Tag="PanelFree">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE8D7;" Margin="0,0,10,0" Foreground="LightGreen" />
+                                <TextBlock Text="Free Tier Features" FontSize="16" FontWeight="SemiBold" Foreground="LightGreen" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <StackPanel x:Name="PanelFree" Visibility="Collapsed" Margin="12,8,4,4">
+                            <TextBlock Text="- Local event logging" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,4" />
+                            <TextBlock Text="- Motion ignore zones" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,4" />
+                            <TextBlock Text="- Webhooks on alert" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,4" />
+                            <TextBlock Text="- Config export/import" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,4" />
+                            <TextBlock Text="- Sound preview, dark theme" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,4" />
+                            <TextBlock Text="- Dashboard stats and configurable countdown" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,4" />
+                            <TextBlock Text="- Multi-recipient email" TextWrapping="Wrap" FontSize="13" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Tips -->
+                <Border Style="{StaticResource CardStyle}" Margin="0,0,0,24">
+                    <StackPanel>
+                        <ToggleButton x:Name="TgTips" IsChecked="False" HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
+                                      Background="Transparent" BorderThickness="0" Click="ToggleSection_Click" Tag="PanelTips">
+                            <StackPanel Orientation="Horizontal">
+                                <FontIcon Glyph="&#xE946;" Margin="0,0,10,0" />
+                                <TextBlock Text="Tips &amp; Troubleshooting" FontSize="16" FontWeight="SemiBold" />
+                            </StackPanel>
+                        </ToggleButton>
+                        <StackPanel x:Name="PanelTips" Visibility="Collapsed" Margin="12,8,4,4">
+                            <TextBlock Text="- Prefer a stable scene - avoid fans, TVs, and swaying plants." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Use ignore zones for outdoor windows." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Raise Image Delta / Night Image Delta if night false positives." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Settings save when a field loses focus or a toggle changes." TextWrapping="Wrap" FontSize="13" Margin="0,0,0,6" />
+                            <TextBlock Text="- Export config before reinstalling the app." TextWrapping="Wrap" FontSize="13" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

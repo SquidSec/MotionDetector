@@ -3,108 +3,233 @@
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:local="using:MotionDetector.Views"
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-      xmlns:converters="using:BasecodeLibrary.Converters"
-      xmlns:baseCodeControls="using:BasecodeLibrary.Controls"
-      mc:Ignorable="d">
+       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+       xmlns:converters="using:BasecodeLibrary.Converters"
+       mc:Ignorable="d">
 
     <Page.Resources>
         <converters:BoolToVisibilityConverter x:Key="boolToVisConverter" />
     </Page.Resources>
 
-    <Grid>
-        <Grid>
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <!-- Top stats bar -->
+        <Border Background="{ThemeResource SystemControlBackgroundAltHighBrush}"
+                BorderThickness="0,0,0,1"
+                BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                VerticalAlignment="Top"
+                Padding="12,8">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock Text="Camera: " Style="{StaticResource SettingLabelStyle}" />
+                    <TextBlock Text="{Binding SelectedCameraName}" FontWeight="SemiBold" Margin="0,0,16,0" MaxWidth="180" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="FPS: " Style="{StaticResource SettingLabelStyle}" />
+                    <TextBlock Text="{Binding LiveFps}" FontWeight="Bold" Foreground="{ThemeResource SystemAccentColor}" Margin="0,0,16,0" />
+                    <TextBlock Text="Last: " Style="{StaticResource SettingLabelStyle}" />
+                    <TextBlock Text="{Binding LastMotionTime}" Margin="0,0,16,0" />
+                    <TextBlock Text="Alerts: " Style="{StaticResource SettingLabelStyle}" />
+                    <TextBlock Text="{Binding TotalAlertsToday}" FontWeight="Bold" Foreground="Orange" />
+                </StackPanel>
+
+                <Border x:Name="alertBox"
+                        Grid.Column="2"
+                        Visibility="{Binding Path=IsAlert, Converter={StaticResource boolToVisConverter}}"
+                        Background="#CCFF0000"
+                        CornerRadius="4"
+                        Padding="12,4">
+                    <TextBlock Text="ALERT" FontWeight="Bold" FontSize="16" Foreground="White" />
+                </Border>
+            </Grid>
+        </Border>
+
+        <!-- Main content; bottom margin set in code when ads visible -->
+        <Grid x:Name="MainContentGrid" Margin="0,48,0,0">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width=".7*" />
+                <ColumnDefinition Width="280" />
+                <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
 
-            <Border Canvas.ZIndex="1"
-                    Grid.Column="1"
-                    VerticalAlignment="Top"
-                    HorizontalAlignment="Center"
-                    x:Name="alertBox"
-                    Visibility="{Binding Path=IsAlert, Converter={StaticResource boolToVisConverter}}"
-                    BorderBrush="Red"
-                    BorderThickness="5"
-                    Width="300"
-                    Height="100">
-                <TextBlock FontSize="50"
-                           HorizontalAlignment="Center"
-                           VerticalAlignment="Center"
-                           Foreground="Red">| ALERT |</TextBlock>
-            </Border>
-            <Border Name="AlertButton"
-                    Canvas.ZIndex="1"
-                    Visibility="Collapsed"
-                    Grid.Column="0"
-                    VerticalAlignment="Bottom"
-                    HorizontalAlignment="Left">
-                <Button Background="Red"
-                        Height="50"
-                        Width="250"
-                        Canvas.ZIndex="1"
-                        FontWeight="Bold"
-                        Command="{Binding StopAlertSoundCommand}">STOP ALERTING SOUND</Button>
+            <!-- Left panel: images scroll, stop button pinned to bottom -->
+            <Border Grid.Column="0" 
+                    Background="{ThemeResource SystemControlBackgroundAltMediumBrush}"
+                    BorderBrush="{ThemeResource SystemControlForegroundBaseLowBrush}"
+                    BorderThickness="0,0,1,0"
+                    Padding="8">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Pivot Grid.Row="0">
+                        <PivotItem Header="Baseline">
+                            <ListView ItemsSource="{Binding Path=DisplayImages}"
+                                      SelectionMode="None"
+                                      HorizontalContentAlignment="Stretch">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Padding" Value="0,4" />
+                                        <Setter Property="Margin" Value="0" />
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource ImageItemStyle}" HorizontalAlignment="Stretch" Height="140">
+                                            <Image Source="{Binding}" Stretch="UniformToFill" HorizontalAlignment="Stretch" />
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </PivotItem>
+                        <PivotItem Header="Alerts">
+                            <ListView x:Name="alertImageListView"
+                                      ItemsSource="{Binding Path=AlertDisplayImages}"
+                                      RightTapped="alertImageListView_RightTapped"
+                                      SelectedItem="{Binding Path=SelectedAlertImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      SelectionMode="Single"
+                                      HorizontalContentAlignment="Stretch">
+                                <ListView.ItemContainerStyle>
+                                    <Style TargetType="ListViewItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <Setter Property="Padding" Value="0,4" />
+                                        <Setter Property="Margin" Value="0" />
+                                        <Setter Property="ContextFlyout">
+                                            <Setter.Value>
+                                                <MenuFlyout>
+                                                    <MenuFlyoutItem Text="Save Image to Disk..."
+                                                                    Icon="Save"
+                                                                    Click="OnSaveContextMenuClicked" />
+                                                </MenuFlyout>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ListView.ItemContainerStyle>
+                                <ListView.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Style="{StaticResource ImageItemStyle}" HorizontalAlignment="Stretch">
+                                            <StackPanel>
+                                                <Image Source="{Binding Path=AlertDisplayImage}" Height="140" Stretch="UniformToFill" HorizontalAlignment="Stretch" />
+                                                <TextBlock Text="{Binding Path=AlertDisplayCaption}" 
+                                                           FontSize="11" 
+                                                           TextTrimming="CharacterEllipsis"
+                                                           Margin="4,4" />
+                                            </StackPanel>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </PivotItem>
+                    </Pivot>
+
+                    <!-- Pinned to bottom of left container -->
+                    <Button Grid.Row="1"
+                            Background="#E53935"
+                            Foreground="White"
+                            Margin="0,8,0,0"
+                            HorizontalAlignment="Stretch"
+                            Height="48"
+                            FontWeight="Bold"
+                            Command="{Binding StopAlertSoundCommand}"
+                            Content="STOP ALERTING SOUND" />
+                </Grid>
             </Border>
 
-            <ContentControl Grid.Column="1"
-                            HorizontalAlignment="Left"
-                            Name="captureElementControl" />
-            <Border Width="250"
-                    Grid.Column="0"
-                    BorderBrush="White"
-                    BorderThickness="2"
-                    HorizontalAlignment="Left">
-                <Pivot>
-                    <PivotItem Header="Baseline Images">
-                        <ListView SelectionMode="Single"
-                                  ItemsSource="{Binding Path=DisplayImages}">
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <Image Source="{Binding}" />
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </PivotItem>
-                    <PivotItem Header="Alert Images">
-                        <ListView x:Name="alertImageListView"
-                                  ItemsSource="{Binding Path=AlertDisplayImages}"
-                                  RightTapped="alertImageListView_RightTapped"
-                                  SelectedItem="{Binding Path=SelectedAlertImage, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                  SelectionMode="Single">
-                            <ListView.Resources>
-                                <Style TargetType="ListViewItem">
-                                    <Setter Property="ContextFlyout">
-                                        <Setter.Value>
-                                            <MenuFlyout>
-                                                <MenuFlyoutItem Text="Save Image"
-                                                                Icon="Save"
-                                                                Click="OnSaveContextMenuClicked" />
-                                            </MenuFlyout>
-                                        </Setter.Value>
-                                    </Setter>
-                                </Style>
-                            </ListView.Resources>
-                            <ListView.ItemTemplate>
-                                <DataTemplate>
-                                    <StackPanel>
-                                        <Image Source="{Binding Path=AlertDisplayImage}" />
-                                        <TextBlock Text="{Binding Path=AlertDisplayCaption}" />
-                                    </StackPanel>
-                                </DataTemplate>
-                            </ListView.ItemTemplate>
-                        </ListView>
-                    </PivotItem>
-                </Pivot>
-
-            </Border>
-
+            <!-- Camera Preview (primary + optional secondary) -->
+            <Grid Grid.Column="1" Margin="8" x:Name="CameraPreviewHost">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition x:Name="SecondaryRow" Height="0" />
+                </Grid.RowDefinitions>
+                <Border Background="Black" Grid.Row="0">
+                    <Grid>
+                        <ContentControl Name="captureElementControl"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+                        <TextBlock Text="{Binding SelectedCameraName}"
+                                   VerticalAlignment="Top" HorizontalAlignment="Left"
+                                   Margin="8" Foreground="White" Opacity="0.8" FontSize="12" />
+                    </Grid>
+                </Border>
+                <Border x:Name="SecondaryCameraBorder"
+                        Grid.Row="1"
+                        Background="Black"
+                        Margin="0,8,0,0"
+                        Visibility="Collapsed">
+                    <Grid>
+                        <ContentControl Name="secondaryCaptureElementControl"
+                                        HorizontalAlignment="Stretch"
+                                        VerticalAlignment="Stretch" />
+                        <TextBlock Text="{Binding SecondaryCameraName}"
+                                   VerticalAlignment="Top" HorizontalAlignment="Left"
+                                   Margin="8" Foreground="White" Opacity="0.8" FontSize="12" />
+                    </Grid>
+                </Border>
+            </Grid>
         </Grid>
-        <baseCodeControls:RateReminder x:Name="rateReminder"
-                                       ReminderTrigger="3"
-                                       HorizontalAlignment="Stretch"
-                                       VerticalAlignment="Stretch" />
 
+        <!-- Rotating SquidSec / partner ads (~3x taller); hidden when ads removed / premium -->
+        <Border x:Name="SquidAdBanner"
+                VerticalAlignment="Bottom"
+                Height="160"
+                Background="#0D1117"
+                BorderBrush="#00ff9f"
+                BorderThickness="0,2,0,0"
+                Padding="14,12">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <Border Background="#161B22" CornerRadius="6" Margin="0,0,14,0" Tapped="SquidAd_Tapped">
+                    <Image x:Name="AdImage" Source="ms-appx:///Assets/Ads/squid_logo.png" Stretch="Uniform" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="8" />
+                </Border>
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Tapped="SquidAd_Tapped">
+                    <TextBlock x:Name="AdTitle" Text="SquidScan by SquidSec" FontWeight="Bold" Foreground="#00ff9f" FontSize="18" TextWrapping="Wrap" />
+                    <TextBlock x:Name="AdSubtitle" Text="Automated reconnaissance with scheduled scans, change detection, and executive reports."
+                               Foreground="#B0B0B0" FontSize="14" TextWrapping="Wrap" Margin="0,8,0,0" MaxHeight="72" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Text="Sponsored"
+                               Foreground="#666" FontSize="11" Margin="0,8,0,0" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="12,0,0,0">
+                    <Button x:Name="AdCtaButton" Content="Learn More" Click="SquidAd_Click"
+                            Background="#00ff9f" Foreground="#0D1117" FontWeight="Bold" Padding="20,12" MinWidth="120" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- Preparation / Countdown overlay -->
+        <Border x:Name="StartupStatusBar" 
+                Background="#E61E1E1E" 
+                Visibility="{Binding IsInPreparationMode, Converter={StaticResource boolToVisConverter}}"
+                HorizontalAlignment="Stretch" 
+                VerticalAlignment="Center"
+                Margin="40">
+            <StackPanel Padding="24" HorizontalAlignment="Center">
+                <TextBlock Foreground="Yellow" FontSize="20" HorizontalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center">
+                    <Run Text="Alerting starts in " /><Run Text="{Binding CountdownSecondsRemaining}" /><Run Text=" seconds - please leave the room" />
+                </TextBlock>
+                <TextBlock Foreground="LightGray" FontSize="14" HorizontalAlignment="Center" Margin="0,12,0,0">
+                    <Run Text="Baseline images captured: " /><Run Text="{Binding DisplayImages.Count}" />
+                </TextBlock>
+                <TextBlock Text="Press Start to begin the leave-the-room countdown. Baseline images begin only after the countdown finishes. Duration: Settings → Alert Countdown."
+                           Foreground="Gray" FontSize="12" HorizontalAlignment="Center" Margin="0,8,0,0" TextWrapping="Wrap" TextAlignment="Center" />
+                <Button Content="Start Countdown"
+                        Command="{Binding StartCountdownCommand}"
+                        Background="{ThemeResource SystemAccentColor}"
+                        Foreground="White"
+                        FontWeight="Bold"
+                        Padding="24,10"
+                        Margin="0,16,0,0"
+                        HorizontalAlignment="Center"
+                        Visibility="{Binding ShowStartCountdownButton, Converter={StaticResource boolToVisConverter}}" />
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

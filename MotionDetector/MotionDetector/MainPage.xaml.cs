@@ -2,174 +2,219 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using System.ComponentModel;
-using RussLib.Pages;
 using MotionDetector.Views;
 using MotionDetector.Utilities;
-using Windows.UI.Popups;
 using MotionDetector.Models;
-using Windows.ApplicationModel.Store;
 
 namespace MotionDetector
 {
     public sealed partial class MainPage : Page, INotifyPropertyChanged
     {
-        private bool _premiumFeatures;
         private TutorialModel _tutorialModels = null;
-
-        private Visibility _AdVisibility;
-        private Visibility _PremiumVersionVisibility;
 
         public event PropertyChangedEventHandler PropertyChanged;
 
-        public Visibility AdVisibility
-        {
-            get { return _AdVisibility; }
-            set { _AdVisibility = value; OnPropertyChanged(nameof(AdVisibility)); }
-        }
-
-        public Visibility PremiumVersionVisibility
-        {
-            get { return _PremiumVersionVisibility; }
-            set { _PremiumVersionVisibility = value; OnPropertyChanged(nameof(PremiumVersionVisibility)); }
-        }
-
-        public bool PremiumFeatures
-        {
-            get { return _premiumFeatures; }
-            set
-            {
-                _premiumFeatures = value;
-                PremiumVersionVisibility = _premiumFeatures ? Visibility.Collapsed : Visibility.Visible;
-                OnPropertyChanged(nameof(PremiumFeatures));
-            }
-        }
-
         public MainPage()
         {
-            AdVisibility = Visibility.Visible;
-
             this.InitializeComponent();
             this.Loaded += MainPage_Loaded;
         }
 
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                var logPath = System.IO.Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "mainpage_loaded.txt");
+                System.IO.File.WriteAllText(logPath, "MainPage_Loaded started at " + DateTime.Now);
+            }
+            catch { }
+
             MainDisplayFrame.Navigate(typeof(DashboardPage));
 
             try
             {
                 await StoreServices.SetupStoreServices();
-
-                LicenseInformation LicenseInformation = CurrentApp.LicenseInformation;
                 StoreServices.CheckFreemiumStatus();
                 StoreServices.CheckForPremiumStatus();
-
-                AdVisibility = StoreServices.RemoveAds || StoreServices.IsPremium ? Visibility.Collapsed : Visibility.Visible;
-                PremiumFeatures = StoreServices.IsPremium;
-   
+                if (StoreServices.IsPremium)
+                    StoreServices.RemoveAds = true;
                 _tutorialModels = ConfigurationServices.GetTutorialLinks();
             }
-            catch
+            catch (Exception ex)
             {
-                //if this fails we want to eat it silently. 
-                //we have a backup for tutorials null and 
-                //the user doesn't care about telemetry
+                try
+                {
+                    var logPath = System.IO.Path.Combine(Windows.Storage.ApplicationData.Current.LocalFolder.Path, "mainpage_crash.txt");
+                    System.IO.File.WriteAllText(logPath, "Exception in MainPage_Loaded: " + ex);
+                }
+                catch { }
             }
 
+            UpdatePremiumNavState();
             this.DataContext = this;
+
+            try { await RatingNagServices.ShowNagIfNeededAsync(); } catch { }
         }
 
-        private async void ShowPayWall()
+        public void SetNavigationHidden(bool hidden)
         {
-            MessageDialog dialog = new MessageDialog(String.Empty);
-            dialog.Commands.Add(new UICommand("Go Premium") { Id = 0 });
-            dialog.Commands.Add(new UICommand("Stay Free but Weeeaaaakkk") { Id = 1 });
-            dialog.Content = "In order to use this feature you must have the Premium Version.";
-            dialog.Title = "Woah, hold on partner!";
-            var result = await dialog.ShowAsync();
-            if(result != null && (int)result.Id == 0 )
+            if (NavigationPane == null) return;
+            if (hidden)
             {
-                PremiumFeatures = await StoreServices.OpenStorePurchasePremium();
-                AdVisibility = StoreServices.RemoveAds || StoreServices.IsPremium ? Visibility.Collapsed : Visibility.Visible;
+                NavigationPane.IsPaneOpen = false;
+                NavigationPane.PaneDisplayMode = NavigationViewPaneDisplayMode.LeftMinimal;
+                NavigationPane.IsPaneToggleButtonVisible = false;
             }
+            else
+            {
+                NavigationPane.PaneDisplayMode = NavigationViewPaneDisplayMode.Auto;
+                NavigationPane.IsPaneToggleButtonVisible = true;
+                NavigationPane.IsPaneOpen = true;
+            }
+        }
+
+        private void SetPremiumItem(NavigationViewItem item, bool premium)
+        {
+            if (item == null) return;
+            item.IsEnabled = premium;
+        }
+
+        private void UpdatePremiumNavState()
+        {
+            bool premium = StoreServices.IsPremium;
+            bool adsRemoved = StoreServices.RemoveAds || premium;
+
+            if (NavRemoveAds != null)
+            {
+                NavRemoveAds.IsEnabled = !adsRemoved;
+                NavRemoveAds.Content = adsRemoved ? "Ads Removed" : "Remove Ads - $0.99";
+            }
+            if (NavUnlockPremium != null)
+            {
+                NavUnlockPremium.IsEnabled = !premium;
+                NavUnlockPremium.Content = premium ? "Premium Unlocked" : "Unlock Premium Features- $1.99";
+            }
+
+            SetPremiumItem(NavHiddenMode, premium);
+            SetPremiumItem(NavAlertSounds, premium);
+            SetPremiumItem(NavHistory, premium);
+            SetPremiumItem(NavSchedule, premium);
+            SetPremiumItem(NavZones, premium);
+            SetPremiumItem(NavClips, premium);
+            SetPremiumItem(NavDiscord, premium);
+            SetPremiumItem(NavMultiCam, premium);
+            SetPremiumItem(NavNight, premium);
+            SetPremiumItem(NavQuiet, premium);
+            SetPremiumItem(NavPin, premium);
+            SetPremiumItem(NavHealth, premium);
+            SetPremiumItem(NavNightRecipient, premium);
         }
 
         private async void NavigationPane_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            switch (args.InvokedItem)
+            string item = args.InvokedItem as string;
+            if (string.IsNullOrEmpty(item) && args.InvokedItem is NavigationViewItem nvi)
+                item = nvi.Content as string;
+            if (string.IsNullOrEmpty(item))
+                return;
+            item = item.Trim();
+
+            if (item.StartsWith("Remove Ads") || item == "Ads Removed")
             {
-                case "Unlock Premium Version $1.99":
-                    PremiumFeatures = await StoreServices.OpenStorePurchasePremium();
-                    AdVisibility = StoreServices.RemoveAds || StoreServices.IsPremium ? Visibility.Collapsed : Visibility.Visible;
+                if (!StoreServices.RemoveAds && !StoreServices.IsPremium)
+                {
+                    await StoreServices.OpenStoreRemoveAds();
+                    UpdatePremiumNavState();
+                }
+                return;
+            }
+
+            if (item.StartsWith("Unlock Premium") || item == "Premium Unlocked")
+            {
+                if (!StoreServices.IsPremium)
+                {
+                    await StoreServices.OpenStorePurchasePremium();
+                    UpdatePremiumNavState();
+                }
+                return;
+            }
+
+            switch (item)
+            {
+                case "Dashboard":
+                    SetNavigationHidden(false);
+                    if (MainDisplayFrame.CurrentSourcePageType != typeof(DashboardPage))
+                        MainDisplayFrame.Navigate(typeof(DashboardPage));
                     break;
-                case "Go into Hidden Mode":
-                    if (!PremiumFeatures)
+
+                case "Hidden Mode":
+                    if (StoreServices.IsPremium)
                     {
-                        ShowPayWall();
-                    }
-                    else
-                    {
+                        SetNavigationHidden(true);
                         MainDisplayFrame.Navigate(typeof(HiddenModeDashboardPage));
                     }
                     break;
-                case "Select Alert Sounds":
-                    if (!PremiumFeatures)
-                    {
-                        ShowPayWall();
-                    }
-                    else
-                    {
+
+                case "Alert Sounds":
+                    if (StoreServices.IsPremium)
                         MainDisplayFrame.Navigate(typeof(AlertSoundsPage));
-                    }
                     break;
-                case "Schedule Active Hours":
-                    if (!PremiumFeatures)
-                    {
-                        ShowPayWall();
-                    }
+
+                case "Alert History":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(AlertHistoryPage));
                     break;
-                case "Define Custom Alert Area":
-                    if (!PremiumFeatures)
-                    {
-                        ShowPayWall();
-                    }
+
+                case "Active Hours Schedule":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "schedule");
                     break;
-                case "Dashboard":
-                    if (MainDisplayFrame.CurrentSourcePageType != typeof(DashboardPage) )
-                    {
-                        MainDisplayFrame.Navigate(typeof(DashboardPage));
-                    }
+                case "Named Zones & Smart Filter":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "zones");
                     break;
-                case "About":
-                    MainDisplayFrame.Navigate(typeof(AboutPage));
+                case "Alert Clips & Buffer":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "clips");
                     break;
-                case "Remove Ads $.99":
-                    AdVisibility = await StoreServices.OpenStoreRemoveAds() ? Visibility.Collapsed : Visibility.Visible;
+                case "Discord / IFTTT Alerts":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "integrations");
                     break;
-                case "Tutorial":
-                    Uri youtubeTutorial;
-                    if (_tutorialModels != null)
-                    {
-                        youtubeTutorial = new Uri(_tutorialModels.TutorialLinkOne);
-                    }
-                    else
-                    {
-                        youtubeTutorial = new Uri(@"https://youtu.be/EpaH1thk4IA");
-                    }
-                    await Windows.System.Launcher.LaunchUriAsync(youtubeTutorial);
+                case "Multi-Camera":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "multicam");
                     break;
+                case "Night Vision Preset":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "night");
+                    break;
+                case "Quiet Sound Hours":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "quiet");
+                    break;
+                case "Settings PIN Lock":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "pin");
+                    break;
+                case "Health Check":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "health");
+                    break;
+                case "Night Recipient Rules":
+                    if (StoreServices.IsPremium)
+                        MainDisplayFrame.Navigate(typeof(PremiumFeaturePage), "nightrecipient");
+                    break;
+
+                case "Documentation":
+                    MainDisplayFrame.Navigate(typeof(DocumentationPage));
+                    break;
+
                 default:
-                    if(args.InvokedItem is NavigationViewItem)
+                    if (args.InvokedItem is NavigationViewItem navItem &&
+                        (navItem.Content as string) == "Settings")
                     {
-                        if((args.InvokedItem as NavigationViewItem).Content as String == "Settings")
-                        {
-                            MainDisplayFrame.Navigate(typeof(SettingsPage));
-                            break;
-                        }
-                    }
-                    else if (MainDisplayFrame.CurrentSourcePageType != typeof(DashboardPage))
-                    {
-                        MainDisplayFrame.Navigate(typeof(DashboardPage));
+                        MainDisplayFrame.Navigate(typeof(SettingsPage));
                     }
                     break;
             }
@@ -177,12 +222,7 @@ namespace MotionDetector
 
         public void OnPropertyChanged(String prop)
         {
-            PropertyChangedEventHandler handler = PropertyChanged;
-
-            if (handler != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(prop));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
         }
     }
 }
