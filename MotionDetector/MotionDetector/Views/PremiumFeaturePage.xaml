@@ -1,0 +1,233 @@
+<Page
+    x:Class="MotionDetector.Views.PremiumFeaturePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Border Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}" Padding="16,12">
+            <TextBlock x:Name="PageTitle" Text="Premium Feature" FontSize="22" FontWeight="SemiBold" HorizontalAlignment="Center" />
+        </Border>
+
+        <ScrollViewer Grid.Row="1" Padding="20" VerticalScrollBarVisibility="Auto">
+            <StackPanel MaxWidth="560" HorizontalAlignment="Center">
+
+                <!-- Schedule -->
+                <StackPanel x:Name="PanelSchedule" Visibility="Collapsed">
+                    <TextBlock Text="Arm motion detection only during chosen hours. Overnight windows are supported (e.g. 10:00 PM - 6:00 AM)." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Enable schedule" VerticalAlignment="Center" Style="{StaticResource SettingLabelStyle}" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.ScheduleEnabled, Mode=TwoWay}" />
+                            </Grid>
+                            <TextBlock Text="Start time" Margin="0,12,0,4" />
+                            <TimePicker Time="{Binding ScheduleStartTime, Mode=TwoWay}" ClockIdentifier="12HourClock" HorizontalAlignment="Left" />
+                            <TextBlock Text="End time" Margin="0,12,0,4" />
+                            <TimePicker Time="{Binding ScheduleEndTime, Mode=TwoWay}" ClockIdentifier="12HourClock" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Zones -->
+                <StackPanel x:Name="PanelZones" Visibility="Collapsed">
+                    <TextBlock Text="Name the monitored zone and set a minimum motion area to reduce false alerts." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Zone name" Margin="0,0,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.ZoneName, Mode=TwoWay}" />
+                            <TextBlock Text="Ignore top %" Margin="0,12,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.IgnoreTopPercent, Mode=TwoWay}" Width="100" HorizontalAlignment="Left" />
+                            <TextBlock Text="Ignore bottom %" Margin="0,12,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.IgnoreBottomPercent, Mode=TwoWay}" Width="100" HorizontalAlignment="Left" />
+                            <TextBlock Text="Ignore left %" Margin="0,12,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.IgnoreLeftPercent, Mode=TwoWay}" Width="100" HorizontalAlignment="Left" />
+                            <TextBlock Text="Ignore right %" Margin="0,12,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.IgnoreRightPercent, Mode=TwoWay}" Width="100" HorizontalAlignment="Left" />
+                            <TextBlock Text="Min motion area %" Margin="0,12,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.MinMotionAreaPercent, Mode=TwoWay}" Width="100" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Clips -->
+                <StackPanel x:Name="PanelClips" Visibility="Collapsed">
+                    <TextBlock Text="Keep a rolling frame buffer and save short image sequences when motion is detected." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Continuous buffer" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.ContinuousBufferEnabled, Mode=TwoWay}" />
+                            </Grid>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Save clip on alert" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.SaveAlertClip, Mode=TwoWay}" />
+                            </Grid>
+                            <TextBlock Text="Frames to keep" Margin="0,12,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.AlertClipFrames, Mode=TwoWay}" Width="80" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Integrations Discord/IFTTT -->
+                <StackPanel x:Name="PanelIntegrations" Visibility="Collapsed">
+                    <TextBlock Text="Send motion events to Discord or IFTTT. Use Test to verify without waiting for motion." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Discord enabled" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.DiscordEnabled, Mode=TwoWay}" />
+                            </Grid>
+                            <TextBlock Text="Discord webhook URL" Margin="0,8,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.DiscordWebhookUrl, Mode=TwoWay}" />
+                            <Button Content="Test Discord" Command="{Binding TestDiscordCommand}" Margin="0,8,0,16" HorizontalAlignment="Left" />
+
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="IFTTT enabled" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.IftttEnabled, Mode=TwoWay}" />
+                            </Grid>
+                            <TextBlock Text="IFTTT key" Margin="0,8,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.IftttKey, Mode=TwoWay}" />
+                            <TextBlock Text="IFTTT event name" Margin="0,8,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.IftttEventName, Mode=TwoWay}" />
+                            <Button Content="Test IFTTT" Command="{Binding TestIftttCommand}" Margin="0,8,0,8" HorizontalAlignment="Left" />
+                            <TextBlock Text="{Binding Status}" Foreground="{ThemeResource SystemAccentColor}" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Multi camera -->
+                <StackPanel x:Name="PanelMultiCam" Visibility="Collapsed">
+                    <TextBlock Text="Choose a secondary camera from the list. Primary camera is set on the main Settings page." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Secondary camera" Margin="0,0,0,8" />
+                            <ComboBox ItemsSource="{Binding AvailableCameras}"
+                                      SelectedItem="{Binding SecondaryCameraModel, Mode=TwoWay}"
+                                      HorizontalAlignment="Stretch">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DeviceName}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Night vision -->
+                <StackPanel x:Name="PanelNight" Visibility="Collapsed">
+                    <TextBlock Text="When the scene is dark, apply a less-sensitive night profile to reduce false alerts." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Use night vision preset" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.UseNightVisionPreset, Mode=TwoWay}" />
+                            </Grid>
+                            <TextBlock Text="Night image delta" Margin="0,12,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.NightImageDelta, Mode=TwoWay}" Width="80" HorizontalAlignment="Left" />
+                            <TextBlock Text="Dark shift threshold" Margin="0,12,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.DarkShiftThreshold, Mode=TwoWay}" Width="80" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Quiet hours -->
+                <StackPanel x:Name="PanelQuiet" Visibility="Collapsed">
+                    <TextBlock Text="Suppress alert sounds during quiet hours. Emails and webhooks still fire." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Enable quiet hours" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{Binding QuietEnabled, Mode=TwoWay}" />
+                            </Grid>
+                            <TextBlock Text="Quiet start" Margin="0,12,0,4" />
+                            <TimePicker Time="{Binding QuietStartTime, Mode=TwoWay}" ClockIdentifier="12HourClock" HorizontalAlignment="Left" />
+                            <TextBlock Text="Quiet end" Margin="0,12,0,4" />
+                            <TimePicker Time="{Binding QuietEndTime, Mode=TwoWay}" ClockIdentifier="12HourClock" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- PIN -->
+                <StackPanel x:Name="PanelPin" Visibility="Collapsed">
+                    <TextBlock Text="Optional PIN stored with your configuration to protect settings." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Settings PIN" Margin="0,0,0,4" />
+                            <PasswordBox Password="{Binding ConfigurationSettings.AppConfig.SettingsPin, Mode=TwoWay}" />
+                            <Grid Margin="0,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Lock settings when armed" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.LockSettingsWhenArmed, Mode=TwoWay}" />
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Health -->
+                <StackPanel x:Name="PanelHealth" Visibility="Collapsed">
+                    <TextBlock Text="Health check interval for long-running monitoring sessions." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <Grid Margin="0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" /><ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Enable health check" VerticalAlignment="Center" />
+                                <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.HealthCheckEnabled, Mode=TwoWay}" />
+                            </Grid>
+                            <TextBlock Text="Interval (minutes)" Margin="0,12,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.HealthCheckMinutes, Mode=TwoWay}" Width="80" HorizontalAlignment="Left" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <!-- Night recipient -->
+                <StackPanel x:Name="PanelNightRecipient" Visibility="Collapsed">
+                    <TextBlock Text="Optional alternate email recipient for overnight alerts (comma-separated allowed)." TextWrapping="Wrap" Margin="0,0,0,16" Opacity="0.85" />
+                    <Border Style="{StaticResource CardStyle}">
+                        <StackPanel>
+                            <TextBlock Text="Night-only recipient(s)" Margin="0,0,0,4" />
+                            <TextBox Text="{Binding ConfigurationSettings.AppConfig.NightRecipient, Mode=TwoWay}" />
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+
+                <TextBlock Text="Changes save automatically." FontSize="11" Foreground="Gray" Margin="0,16,0,0" HorizontalAlignment="Center" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

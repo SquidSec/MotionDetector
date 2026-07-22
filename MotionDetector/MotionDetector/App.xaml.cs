@@ -20,6 +20,20 @@ namespace MotionDetector
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            this.UnhandledException += App_UnhandledException;
+        }
+
+        private void App_UnhandledException(object sender, Windows.UI.Xaml.UnhandledExceptionEventArgs e)
+        {
+            try
+            {
+                e.Handled = true;
+                var localPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+                var logPath = System.IO.Path.Combine(localPath, "crashlog.txt");
+                var text = $"Time: {DateTime.Now}\nException: {e.Exception}\nMessage: {e.Message}\nStack:\n{e.Exception?.StackTrace}";
+                System.IO.File.WriteAllText(logPath, text);
+            }
+            catch { }
         }
 
         /// <summary>
@@ -29,37 +43,52 @@ namespace MotionDetector
         /// <param name="e">Details about the launch request and process.</param>
         protected override void OnLaunched(LaunchActivatedEventArgs e)
         {
-            Frame rootFrame = Window.Current.Content as Frame;
-
-            // Do not repeat app initialization when the Window already has content,
-            // just ensure that the window is active
-            if (rootFrame == null)
+            try
             {
-                // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+                Frame rootFrame = Window.Current.Content as Frame;
 
-                rootFrame.NavigationFailed += OnNavigationFailed;
-
-                if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                // Do not repeat app initialization when the Window already has content,
+                // just ensure that the window is active
+                if (rootFrame == null)
                 {
-                    //TODO: Load state from previously suspended application
+                    // Create a Frame to act as the navigation context and navigate to the first page
+                    rootFrame = new Frame();
+
+                    rootFrame.NavigationFailed += OnNavigationFailed;
+
+                    if (e.PreviousExecutionState == ApplicationExecutionState.Terminated)
+                    {
+                        //TODO: Load state from previously suspended application
+                    }
+
+                    // Place the frame in the current Window
+                    Window.Current.Content = rootFrame;
                 }
 
-                // Place the frame in the current Window
-                Window.Current.Content = rootFrame;
+                if (e.PrelaunchActivated == false)
+                {
+                    if (rootFrame.Content == null)
+                    {
+                        // When the navigation stack isn't restored navigate to the first page,
+                        // configuring the new page by passing required information as a navigation
+                        // parameter
+                        rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    }
+                    // Ensure the current window is active
+                    Window.Current.Activate();
+                }
             }
-
-            if (e.PrelaunchActivated == false)
+            catch (Exception ex)
             {
-                if (rootFrame.Content == null)
+                // Log early crash using direct IO
+                try
                 {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(MainPage), e.Arguments);
+                    var localPath = Windows.Storage.ApplicationData.Current.LocalFolder.Path;
+                    var logPath = System.IO.Path.Combine(localPath, "earlycrash.txt");
+                    System.IO.File.WriteAllText(logPath, "Early crash in OnLaunched: " + ex + "\nStack: " + ex.StackTrace);
                 }
-                // Ensure the current window is active
-                Window.Current.Activate();
+                catch { }
+                throw;
             }
         }
 

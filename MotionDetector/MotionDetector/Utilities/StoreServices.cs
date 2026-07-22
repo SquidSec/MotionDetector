@@ -4,6 +4,8 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Store;
 using Windows.Storage;
+#else
+using Windows.Services.Store;
 #endif
 
 namespace MotionDetector.Utilities
@@ -104,7 +106,7 @@ namespace MotionDetector.Utilities
                 }
             }
 
-            IsPremium = RemoveAds = false;
+            IsPremium = false;
 #endif
         }
 
@@ -152,22 +154,24 @@ namespace MotionDetector.Utilities
             // available for this customer. If they previously acquired a trial they won't 
             // be able to get a trial again, and the StoreProduct.Skus property will 
             // only contain one SKU.
-            StorePurchaseResult purchaseResult = await subscriptionStoreProduct?.RequestPurchaseAsync();
-            switch (purchaseResult.Status)
+            if (subscriptionStoreProduct != null)
             {
-                case StorePurchaseStatus.AlreadyPurchased:
-                case StorePurchaseStatus.Succeeded:
-                    IsPremium = true;
-                    break;
+                StorePurchaseResult purchaseResult = await subscriptionStoreProduct.RequestPurchaseAsync();
+                switch (purchaseResult.Status)
+                {
+                    case StorePurchaseStatus.AlreadyPurchased:
+                    case StorePurchaseStatus.Succeeded:
+                        IsPremium = true;
+                        RemoveAds = true;
+                        break;
 
-                case StorePurchaseStatus.NotPurchased:
-                case StorePurchaseStatus.ServerError:
-                case StorePurchaseStatus.NetworkError:
-                    IsPremium = false;
-                    break;
-                default:
-                    IsPremium = false;
-                    break;
+                    case StorePurchaseStatus.NotPurchased:
+                    case StorePurchaseStatus.ServerError:
+                    case StorePurchaseStatus.NetworkError:
+                        break;
+                    default:
+                        break;
+                }
             }
 #endif
             return IsPremium;
@@ -217,22 +221,29 @@ namespace MotionDetector.Utilities
             // available for this customer. If they previously acquired a trial they won't 
             // be able to get a trial again, and the StoreProduct.Skus property will 
             // only contain one SKU.
-            StorePurchaseResult purchaseResult = await subscriptionStoreProduct?.RequestPurchaseAsync();
-            switch (purchaseResult.Status)
+            if (subscriptionStoreProduct != null)
             {
-                case StorePurchaseStatus.AlreadyPurchased:
-                case StorePurchaseStatus.Succeeded:
-                    RemoveAds = true;
-                    break;
+                StorePurchaseResult purchaseResult = await subscriptionStoreProduct.RequestPurchaseAsync();
+                switch (purchaseResult.Status)
+                {
+                    case StorePurchaseStatus.AlreadyPurchased:
+                    case StorePurchaseStatus.Succeeded:
+                        RemoveAds = true;
+                        break;
 
-                case StorePurchaseStatus.NotPurchased:
-                case StorePurchaseStatus.ServerError:
-                case StorePurchaseStatus.NetworkError:
-                    RemoveAds = false;
-                    break;
-                default:
-                    RemoveAds = false;
-                    break;
+                    case StorePurchaseStatus.NotPurchased:
+                    case StorePurchaseStatus.ServerError:
+                    case StorePurchaseStatus.NetworkError:
+                        RemoveAds = false;
+                        break;
+                    default:
+                        RemoveAds = false;
+                        break;
+                }
+            }
+            else
+            {
+                RemoveAds = false;
             }
 #endif
             return RemoveAds;

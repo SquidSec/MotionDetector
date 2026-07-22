@@ -5,33 +5,65 @@
     xmlns:local="using:MotionDetector.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d" 
+    mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
-    <Grid Margin="0,0,0,0">
-        <Grid.RowDefinitions >
+    <Grid>
+        <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <Grid Grid.Row="0" >
+
+        <Grid Grid.Row="0" Padding="6,4" Background="{ThemeResource SystemControlBackgroundChromeMediumBrush}">
             <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
-            <Button Grid.Column="0" Click="NavigateBack">
-                <SymbolIcon Symbol="Back"  />
+
+            <Button x:Name="BtnBack" Grid.Column="0" Click="BrowserBack_Click" ToolTipService.ToolTip="Back" Margin="0,0,4,0" Padding="10,6">
+                <SymbolIcon Symbol="Back" />
             </Button>
-            <TextBox Name="AddressTextBox" Grid.Column="1" Text="{Binding DestinationAddress, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"/>
-            <Button Grid.Column="2" Click="NavigateForward" >
-                <SymbolIcon Symbol="Forward"  />
+            <Button x:Name="BtnForward" Grid.Column="1" Click="BrowserForward_Click" ToolTipService.ToolTip="Forward" Margin="0,0,4,0" Padding="10,6">
+                <SymbolIcon Symbol="Forward" />
             </Button>
-            <Button Grid.Column="3" Click="ToggleHiddenDashboard">
-                <SymbolIcon Symbol="SolidStar"  />
+            <Button Grid.Column="2" Click="BrowserRefresh_Click" ToolTipService.ToolTip="Refresh" Margin="0,0,8,0" Padding="10,6">
+                <SymbolIcon Symbol="Refresh" />
             </Button>
+
+            <TextBox x:Name="AddressTextBox"
+                     Grid.Column="3"
+                     PlaceholderText="Search or enter address"
+                     KeyDown="AddressTextBox_KeyDown"
+                     FontSize="14"
+                     VerticalAlignment="Center"
+                     Margin="0,0,8,0" />
+
+            <Button Grid.Column="4" Content="Go" Click="NavigateGo_Click" Padding="16,6" Margin="0,0,8,0" />
+            <Button Grid.Column="5" Click="ToggleHiddenDashboard" ToolTipService.ToolTip="Toggle motion dashboard" Padding="10,6" Margin="0,0,8,0">
+                <SymbolIcon Symbol="Camera" />
+            </Button>
+            <Button Grid.Column="6" Content="Exit" Click="ExitHiddenMode_Click" Padding="12,6" />
         </Grid>
-        <WebView Grid.Row="1" Name="webBrowser" Grid.ColumnSpan="4"  />
-        <Frame Margin="50" Grid.Row="1" Name="hiddenDashboard" Visibility="Collapsed" />
+
+        <Grid Grid.Row="1">
+            <WebView x:Name="webBrowser"
+                     NavigationStarting="WebBrowser_NavigationStarting"
+                     NavigationCompleted="WebBrowser_NavigationCompleted"
+                     NavigationFailed="WebBrowser_NavigationFailed"
+                     NewWindowRequested="WebBrowser_NewWindowRequested" />
+            <Frame x:Name="hiddenDashboard" Visibility="Collapsed" Margin="24" />
+            <Border x:Name="BrowserStatusBar"
+                    VerticalAlignment="Bottom"
+                    Background="#99000000"
+                    Padding="10,6"
+                    Visibility="Collapsed">
+                <TextBlock x:Name="BrowserStatusText" Foreground="White" FontSize="12" TextWrapping="Wrap" />
+            </Border>
+        </Grid>
     </Grid>
 </Page>

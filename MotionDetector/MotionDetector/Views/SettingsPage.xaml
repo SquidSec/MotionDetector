@@ -10,184 +10,353 @@
 
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         
-        <TextBlock Text="Application Settings" Grid.Row="0" FontSize="30" HorizontalAlignment="Center" VerticalAlignment="Center" />
-        <Grid Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Top">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width=".5*" />
-                <ColumnDefinition Width="1*" />
-            </Grid.ColumnDefinitions>
-        
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="*"/>
-                <RowDefinition Height="60"/>
-                <RowDefinition Height="Auto"/>
-            </Grid.RowDefinitions>
+        <TextBlock Text="Application Settings" 
+                   Style="{StaticResource SectionHeaderStyle}"
+                   FontSize="24"
+                   HorizontalAlignment="Center"
+                   Margin="0,16" />
 
-            <TextBlock Text="Send Emails:" Grid.Column="0" Grid.Row="0" />
-            <CheckBox 
-                ToolTipService.ToolTip="Toggles whether or not to send emails when alert threshold is hit"
-                Margin="100,0,0,0"
-                IsChecked="{Binding ConfigurationSettings.AppConfig.SendEmails, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                Grid.Column="1" Grid.Row="0" />
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="16">
+            <StackPanel MaxWidth="620" HorizontalAlignment="Center">
+
+                <!-- Camera Selection (top) -->
+                <TextBlock Text="Camera" Style="{StaticResource SectionHeaderStyle}" />
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Camera Source:" Style="{StaticResource SettingLabelStyle}" />
+                            <ComboBox Grid.Column="1"
+                                      ItemsSource="{Binding AvailableCameras}"
+                                      SelectedItem="{Binding SelectedCameraModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                      ToolTipService.ToolTip="Choose your camera source. Change takes effect when you return to the Dashboard.">
+                                <ComboBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock Text="{Binding DeviceName}" />
+                                    </DataTemplate>
+                                </ComboBox.ItemTemplate>
+                            </ComboBox>
+                        </Grid>
+                        <Button Content="Refresh List"
+                                Command="{Binding RefreshCamerasCommand}"
+                                Margin="0,8,0,0"
+                                HorizontalAlignment="Left"
+                                FontSize="10" />
+                        <TextBlock Text="Changes take effect when returning to Dashboard."
+                                   FontSize="11" Foreground="Gray" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Email Notifications -->
+                <TextBlock Text="Email Notifications" Style="{StaticResource SectionHeaderStyle}" />
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Send Emails:" Style="{StaticResource SettingLabelStyle}" />
+                            <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.SendEmails, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="SMTP Provider:" Style="{StaticResource SettingLabelStyle}" />
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding ServerOptions}" 
+                                      SelectedValue="{Binding ConfigurationSettings.SmtpSettings.PreferredSmtpServer, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="From Name:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.SmtpSettings.FromName, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="From Address:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.SmtpSettings.FromAddress, Mode=TwoWay}" />
+                        </Grid>
+                    </StackPanel>
+                </Border>
+
+                <!-- SMTP Details -->
+                <TextBlock Text="SMTP Server Details" Style="{StaticResource SectionHeaderStyle}" />
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Server:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.SmtpSettings.SmtpServer, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Port:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.SmtpSettings.SmtpPort, Mode=TwoWay}" Width="100" HorizontalAlignment="Left" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Use SSL:" Style="{StaticResource SettingLabelStyle}" />
+                            <CheckBox Grid.Column="1" IsChecked="{Binding ConfigurationSettings.SmtpSettings.UseSSL, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Username:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.SmtpSettings.SmtpUserName, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Password:" Style="{StaticResource SettingLabelStyle}" />
+                            <PasswordBox Grid.Column="1" Password="{Binding ConfigurationSettings.SmtpSettings.SmtpPassword, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Recipients (comma/semicolon):" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.SmtpSettings.Recipient, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Button Content="Test SMTP Connection"
+                                Command="{Binding RunTestsCommand}"
+                                IsEnabled="{Binding IsNotRunningTest}"
+                                Margin="0,12,0,4"
+                                HorizontalAlignment="Left" />
+                        <TextBlock Text="{Binding TestStatus}"
+                                   Foreground="{ThemeResource SystemAccentColor}"
+                                   FontSize="12"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,4" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Email Configuration Guide -->
+                <TextBlock Text="Email Configuration Guide" Style="{StaticResource SectionHeaderStyle}" />
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Use an App Password, not your normal login password. Settings save automatically. Use Test SMTP Connection after filling fields." FontSize="12" Foreground="Gray" Margin="0,0,0,10" TextWrapping="Wrap" />
+
+                        <TextBlock Text="Gmail" FontWeight="SemiBold" Margin="0,4,0,2" />
+                        <TextBlock Text="Server smtp.gmail.com port 465 SSL on. Enable 2FA first, then create an App Password." FontSize="12" TextWrapping="Wrap" />
+                        <HyperlinkButton Content="Open Gmail App Passwords" NavigateUri="https://myaccount.google.com/apppasswords" Margin="0,2,0,8" />
+
+                        <TextBlock Text="Outlook / Microsoft 365" FontWeight="SemiBold" Margin="0,4,0,2" />
+                        <TextBlock Text="Server smtp.office365.com port 587 SSL on. Corporate tenants may need SMTP AUTH enabled by an admin." FontSize="12" TextWrapping="Wrap" />
+                        <HyperlinkButton Content="Open Microsoft account security" NavigateUri="https://account.microsoft.com/security" Margin="0,2,0,2" />
+                        <HyperlinkButton Content="Outlook SMTP AUTH docs" NavigateUri="https://learn.microsoft.com/en-us/exchange/clients-and-mobile-in-exchange-online/authenticated-client-smtp-submission" Margin="0,0,0,8" />
+
+                        <TextBlock Text="Yahoo" FontWeight="SemiBold" Margin="0,4,0,2" />
+                        <TextBlock Text="Server smtp.mail.yahoo.com port 465 SSL on. Generate an App Password in Yahoo Account Security." FontSize="12" TextWrapping="Wrap" />
+                        <HyperlinkButton Content="Open Yahoo Account Security" NavigateUri="https://login.yahoo.com/account/security" Margin="0,2,0,8" />
+
+                        <TextBlock Text="iCloud" FontWeight="SemiBold" Margin="0,4,0,2" />
+                        <TextBlock Text="Server smtp.mail.me.com port 587 SSL on. Create an app-specific password at Apple ID." FontSize="12" TextWrapping="Wrap" />
+                        <HyperlinkButton Content="Open Apple ID App-Specific Passwords" NavigateUri="https://appleid.apple.com/account/manage" Margin="0,2,0,8" />
+
+                        <TextBlock Text="Multiple recipients: separate with comma or semicolon." FontSize="12" Foreground="Gray" TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Motion Detection -->
+                <TextBlock Text="Motion Detection" Style="{StaticResource SectionHeaderStyle}" />
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Capture Delay (ms):" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.CaptureDelay, Mode=TwoWay}" Width="120" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Alert Delay (s):" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.AlertDelay, Mode=TwoWay}" Width="80" />
+                        </Grid>
+
+                         <Grid Margin="0,4">
+                             <Grid.ColumnDefinitions>
+                                 <ColumnDefinition Width="Auto" />
+                                 <ColumnDefinition Width="*" />
+                             </Grid.ColumnDefinitions>
+                             <TextBlock Text="Alert Threshold:" Style="{StaticResource SettingLabelStyle}" />
+                             <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.AlertThreshold, Mode=TwoWay}" Width="80" />
+                         </Grid>
+
+                         <Grid Margin="0,4">
+                             <Grid.ColumnDefinitions>
+                                 <ColumnDefinition Width="Auto" />
+                                 <ColumnDefinition Width="*" />
+                             </Grid.ColumnDefinitions>
+                             <TextBlock Text="Alert Countdown (seconds):" Style="{StaticResource SettingLabelStyle}" />
+                             <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.StartupCountdownSeconds, Mode=TwoWay}" Width="80" />
+                         </Grid>
+                      </StackPanel>
+                  </Border>
+
+                 <TextBlock Text="Premium features are in the left menu (). Each opens its own settings page." FontSize="12" Foreground="#FFD54F" TextWrapping="Wrap" Margin="0,16,0,8" />
+
+                 <!-- Free Tier Features -->
+                 <TextBlock Text="Free Tier Features" Style="{StaticResource SectionHeaderStyle}" Foreground="LightGreen" />
+                <Border Style="{StaticResource CardStyle}">
+                    <StackPanel>
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Enable Local Event Logging:" Style="{StaticResource SettingLabelStyle}" />
+                            <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.EnableLocalLogging, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Ignore Top %:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.IgnoreTopPercent, Mode=TwoWay}" Width="80" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Ignore Bottom %:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.IgnoreBottomPercent, Mode=TwoWay}" Width="80" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Ignore Left %:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.IgnoreLeftPercent, Mode=TwoWay}" Width="80" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Ignore Right %:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.IgnoreRightPercent, Mode=TwoWay}" Width="80" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Day Image Delta:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.DayImageDelta, Mode=TwoWay}" Width="80" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Night Image Delta:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.NightImageDelta, Mode=TwoWay}" Width="80" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Webhook Enabled:" Style="{StaticResource SettingLabelStyle}" />
+                            <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.WebhookEnabled, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Webhook URL:" Style="{StaticResource SettingLabelStyle}" />
+                            <TextBox Grid.Column="1" Text="{Binding ConfigurationSettings.AppConfig.WebhookUrl, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Grid Margin="0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Use Dark Theme:" Style="{StaticResource SettingLabelStyle}" />
+                            <ToggleSwitch Grid.Column="1" IsOn="{Binding ConfigurationSettings.AppConfig.UseDarkTheme, Mode=TwoWay}" />
+                        </Grid>
+
+                        <Button Content="Preview Selected Sound" Command="{Binding PreviewSoundCommand}" Margin="0,8,0,0" />
                         
-            <TextBlock Text="Preconfigured SMTP Servers" Grid.Column="0" Grid.Row="1" />
-            <ComboBox SelectionChangedTrigger="Always"
-                ItemsSource="{Binding ServerOptions}" HorizontalAlignment="Stretch"
-                SelectedValue="{Binding ConfigurationSettings.SmtpSettings.PreferredSmtpServer, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                ToolTipService.ToolTip="Sets the preconfigured Smtp server or custom Smtp server" 
-                Margin="100,0,0,0" Grid.Column="1" Grid.Row="1" Width="Auto" />
+                        <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
+                            <Button Content="Export Config" Command="{Binding ExportConfigCommand}" Margin="0,0,8,0" />
+                            <Button Content="Import Config" Command="{Binding ImportConfigCommand}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
 
-            <TextBlock Text="SMTP Server:" Grid.Column="0" Grid.Row="2" />
-            <TextBox
-                Margin="100,0,0,0"
-                Grid.Column="1" Grid.Row="2"
-                ToolTipService.ToolTip="Sets the url for the Smtp server"
-                Text="{Binding ConfigurationSettings.SmtpSettings.SmtpServer, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        
-            <TextBlock Text="SMTP Port:" Grid.Column="0" Grid.Row="3" />
-            <TextBox
-            Margin="100,0,0,0"
-            Grid.Column="1" Grid.Row="3"
-            ToolTipService.ToolTip="Sets the port for the Smtp server"
-            Text="{Binding ConfigurationSettings.SmtpSettings.SmtpPort, 
-            Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-            
-            <TextBlock Text="Use SSL:" Grid.Column="0" Grid.Row="4" />
-            <CheckBox 
-                ToolTipService.ToolTip="Toggles SSL for the SMTP server on and off"
-                Margin="100,0,0,0"
-                IsChecked="{Binding ConfigurationSettings.SmtpSettings.UseSSL, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" 
-                Grid.Column="1" Grid.Row="4" />
+                <TextBlock Text="Settings save automatically when you change a value." FontSize="11" Foreground="Gray" HorizontalAlignment="Center" Margin="0,12,0,4" />
 
-            <TextBlock Text="SMTP Username:" Grid.Column="0" Grid.Row="5" />
-            <TextBox
-                Margin="100,0,0,0"
-                Grid.Column="1" Grid.Row="5"
-                ToolTipService.ToolTip="Sets the SMTP server username"
-                Text="{Binding ConfigurationSettings.SmtpSettings.SmtpUserName, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="SMTP Password:" Grid.Column="0" Grid.Row="6" />
-            <PasswordBox
-                Margin="100,0,0,0"
-                Grid.Column="1" Grid.Row="6"
-                ToolTipService.ToolTip="Sets the SMTP server password"
-                Password="{Binding ConfigurationSettings.SmtpSettings.SmtpPassword, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="SMTP Recipient:" Grid.Column="0" Grid.Row="7" />
-            <TextBox
-                Margin="100,0,0,0"
-                Grid.Column="1" Grid.Row="7"
-                ToolTipService.ToolTip="Sets the recipients email address for where alerts are sent"
-                Text="{Binding ConfigurationSettings.SmtpSettings.Recipient, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="Capture Delay:" Grid.Column="0" Grid.Row="8" />
-            <TextBox
-                Margin="100,0,0,0"
-                Grid.Column="1" Grid.Row="8"
-                ToolTipService.ToolTip="The amount of time in milliseconds between each image being captured for test"
-                Text="{Binding ConfigurationSettings.AppConfig.CaptureDelay, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="Alert Delay:" Grid.Column="0" Grid.Row="9" />
-            <TextBox
-                Margin="100,0,0,0"
-                Grid.Column="1" Grid.Row="9"
-                ToolTipService.ToolTip="The delay in seconds after a alert image is taken to prevent many of the same image"
-                Text="{Binding ConfigurationSettings.AppConfig.AlertDelay, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="Alert Threshold:" Grid.Column="0" Grid.Row="10" />
-            <TextBox
-                Margin="100,0,0,0"
-                Grid.Column="1" Grid.Row="10"
-                ToolTipService.ToolTip="How many images to take prior to emailing"
-                Text="{Binding ConfigurationSettings.AppConfig.AlertThreshold, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="Pixel Delta:" Grid.Column="0" Grid.Row="11" />
-            <TextBox
-                Margin="100,0,0,0"
-                Grid.Column="1" Grid.Row="11"
-                ToolTipService.ToolTip="The delta between each pixel to trigger an alert"
-                Text="{Binding ConfigurationSettings.AppConfig.PixelDelta, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="Image Delta:" Grid.Column="0" Grid.Row="12" />
-            <TextBox
-                Margin="100,0,0,0"
-                Grid.Column="1" Grid.Row="12"
-                ToolTipService.ToolTip="The delta between each image, in percent, to trigger an alert"
-                Text="{Binding ConfigurationSettings.AppConfig.ImageDelta, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-            <TextBlock Text="Night Mode Threshold:" Grid.Column="0" Grid.Row="13" />
-            <TextBox
-                Margin="100,0,0,0" Width="300"
-                Grid.Column="1" Grid.Row="13"
-                ToolTipService.ToolTip="0-255, The higher the number the less alerts you'll have when it gets dark. (Recommend &lt; 100)"
-                Text="{Binding ConfigurationSettings.AppConfig.DarkShiftThreshold, 
-                Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-
-            <StackPanel Orientation="Vertical" HorizontalAlignment="Right" Grid.Column="1" Grid.Row="15" >
-                <HyperlinkButton Click="BrowseToYoutubeTutorial">Click Here For a Configuration Tutorial</HyperlinkButton>
-                <HyperlinkButton Click="BrowseToGmailSecurity">Click Here to enable gmail accounts</HyperlinkButton>               
+                <!-- Full in-app documentation entry -->
+                <TextBlock Text="Help &amp; Documentation" Style="{StaticResource SectionHeaderStyle}" Margin="0,16,0,8" />
+                <Border Style="{StaticResource CardStyle}" Tapped="OpenDocumentation_Tapped" Background="{ThemeResource SystemControlHighlightListLowBrush}">
+                    <StackPanel Orientation="Horizontal" Padding="4">
+                        <FontIcon Glyph="&#xE897;" Margin="0,0,12,0" VerticalAlignment="Center" />
+                        <StackPanel>
+                            <TextBlock Text="Open full feature documentation" FontWeight="SemiBold" FontSize="15" />
+                            <TextBlock Text="In-depth guide: motion settings, email, free tier, premium features, and configuration tips. Tap to open."
+                                       FontSize="12" Foreground="Gray" TextWrapping="Wrap" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
             </StackPanel>
-
-            <TextBlock Text="Choose Your Camera Source:"
-                       Grid.Column="0"
-                       Grid.Row="14" />
-            <ComboBox SelectionChangedTrigger="Always"
-                      ItemsSource="{Binding AvailableCameras}"
-                      HorizontalAlignment="Stretch"
-                      SelectedValue="{Binding SelectedCameraModel, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                      ToolTipService.ToolTip="Choose your camera source"
-                      Margin="100,0,0,0"
-                      Grid.Column="1"
-                      Grid.Row="14"
-                      Width="Auto">
-                <ComboBox.ItemTemplate>
-                    <DataTemplate>
-                        <TextBlock Text="{Binding DeviceName}" />
-                    </DataTemplate>
-                </ComboBox.ItemTemplate>
-            </ComboBox>
-            <Button 
-                Grid.Column="0" Grid.Row="15"
-                Command="{Binding Path=RunTestsCommand}" 
-                IsEnabled="{Binding Path=IsNotRunningTest, UpdateSourceTrigger=PropertyChanged}"                                 
-                ToolTipService.ToolTip="Sends a single test image to the recipient's email" 
-                Content="Test SMTP Configuration" />
-            <Button 
-                Grid.Column="0" Grid.Row="16" Margin="0,10,0,0" Background="DodgerBlue"
-                Command="{Binding Path=UpdateSettingsCommand}"                              
-                ToolTipService.ToolTip="Updates the Configuration Settings for the Application" 
-                Content="Update Settings" />
-
-        </Grid>
+        </ScrollViewer>
     </Grid>
 </Page>
